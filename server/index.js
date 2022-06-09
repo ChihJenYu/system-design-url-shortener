@@ -17,7 +17,7 @@ for (let i = 0; i < 4; i++) {
         read_db: [],
     };
     for (let j = 0; j < 3; j++) {
-        database[i].read_db.push(
+        databases[i].read_db.push(
             new Database({
                 host: dbconfig[i].read_db[j],
                 user: dbconfig[i].write_db.user,
