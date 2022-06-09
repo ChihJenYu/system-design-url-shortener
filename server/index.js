@@ -12,7 +12,18 @@ let localShortUrls = [];
 let iterator = 0;
 
 for (let i = 0; i < 4; i++) {
-    databases[i] = new Database(dbconfig[i]);
+    databases[i] = {
+        write_db: new Database(dbconfig[i].write_db),
+        read_db: [],
+    };
+    for (let j = 0; j < 3; j++) {
+        database[i].read_db[j] = new Database({
+            host: dbconfig[i].read_db[j],
+            user: dbconfig[i].write_db.user,
+            password: dbconfig[i].write_db.password,
+            database: dbconfig[i].write_db.database,
+        });
+    }
 }
 
 app.use(express.json());
@@ -37,18 +48,22 @@ app.post("/createUrl", async (req, res) => {
 
     // save to db
     const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
-    await databases[whichDatabase].connectionQuery(`INSERT INTO ${tableName} SET ?`, {
-        originUrl,
-        shortUrl,
-    });
-
+    await databases[whichDatabase].write_db.connectionQuery(
+        `INSERT INTO ${tableName} SET ?`,
+        {
+            originUrl,
+            shortUrl,
+        }
+    );
     iterator++;
 });
 
 app.get("/getUrl/:shortUrl", async (req, res) => {
     const shortUrl = req.params.shortUrl;
     const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
-    const [resultPacket] = await databases[whichDatabase].connectionQuery(
+    const [resultPacket] = await databases[whichDatabase].read_db[
+        Math.floor(Math.random * 3)
+    ].connectionQuery(
         `SELECT * FROM ${tableName} WHERE shortUrl = ?`,
         shortUrl
     );
