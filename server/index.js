@@ -37,7 +37,7 @@ app.post("/createUrl", async (req, res) => {
 
     // save to db
     const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
-    databases[whichDatabase].connectionQuery(`INSERT INTO ${tableName} SET ?`, {
+    await databases[whichDatabase].connectionQuery(`INSERT INTO ${tableName} SET ?`, {
         originUrl,
         shortUrl,
     });

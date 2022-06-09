@@ -22,7 +22,7 @@ class Database {
     };
 
     connectionQuery = async (command, args) => {
-        const conn = await asyncConnection();
+        const conn = await this.asyncConnection();
         const asyncQuery = (command, args) => {
             return new Promise((resolve, reject) => {
                 conn.query(command, args, (err, result) => {
