@@ -64,7 +64,7 @@ app.get("/getUrl/:shortUrl", async (req, res) => {
     const shortUrl = req.params.shortUrl;
     const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
     const [resultPacket] = await databases[whichDatabase].read_db[
-        Math.floor(Math.random * 3)
+        Math.floor(Math.random() * 3)
     ].connectionQuery(
         `SELECT * FROM ${tableName} WHERE shortUrl = ?`,
         shortUrl
