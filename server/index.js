@@ -45,6 +45,7 @@ app.post("/createUrl", async (req, res) => {
     }
     const { originUrl } = req.body;
     const shortUrl = localShortUrls[iterator];
+    iterator++;
 
     res.send({ shortUrl });
 
@@ -57,7 +58,6 @@ app.post("/createUrl", async (req, res) => {
             shortUrl,
         }
     );
-    iterator++;
 });
 
 app.get("/getUrl/:shortUrl", async (req, res) => {
