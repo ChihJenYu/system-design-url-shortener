@@ -25,19 +25,15 @@ app.use(express.json());
 
 app.get("/url", async (req, res) => {
     const afterIncrement = await redis.INCRBY("iterator", "10000");
-    const shortUrls = keysArray.slice(iterator, 10000);
+    iterator = afterIncrement - 10000;
+    console.log(`Iterator: ${iterator}; afterIncrement: ${afterIncrement}`);
+    const shortUrls = keysArray.slice(iterator, iterator + 10000);
     if (shortUrls.length != 0) {
-        res.send({ shortUrls, from: iterator, to: afterIncrement - 1 });
+        res.send({ shortUrls });
         iterator = afterIncrement;
     } else {
         res.send({ error: "No more space!" });
     }
-});
-
-app.post("/idx", async (req, res) => {
-    const { shortUrl } = req.body;
-    const idx = keysArray.indexOf(shortUrl);
-    res.send({ idx });
 });
 
 app.listen(PORT, () => {
