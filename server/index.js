@@ -2,7 +2,7 @@ const PORT = 3000;
 const express = require("express");
 const app = express();
 const axios = require("axios");
-const { mapIdxToDatabase } = require("../utils/util");
+const { mapShortUrlToCode } = require("../utils/util");
 const Database = require("../db/mysql");
 const databases = {};
 const dbconfig = require("../dbconfig.json");
@@ -36,7 +36,7 @@ app.post("/createUrl", async (req, res) => {
     res.send({ shortUrl });
 
     // save to db
-    const whichDatabase = mapIdxToDatabase(mapCodeToDatabase(shortUrl));
+    const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
     databases[whichDatabase].connectionQuery(`INSERT INTO ${tableName} SET ?`, {
         originUrl,
         shortUrl,
@@ -47,7 +47,7 @@ app.post("/createUrl", async (req, res) => {
 
 app.get("/getUrl/:shortUrl", async (req, res) => {
     const shortUrl = req.params.shortUrl;
-    const whichDatabase = mapIdxToDatabase(mapCodeToDatabase(shortUrl));
+    const whichDatabase = mapCodeToDatabase(mapShortUrlToCode(shortUrl));
     const [resultPacket] = await databases[whichDatabase].connectionQuery(
         `SELECT * FROM ${tableName} WHERE shortUrl = ?`,
         shortUrl
